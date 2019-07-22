@@ -1,16 +1,92 @@
 创建django项目命令
 django-admin.py startproject projectName
 
-创建超级用户
-python manage.py createsuperuser
-
 创建应用
 python manage.py startapp  name
 
-启动项目
-python manage.py runserver 0.0.0.0:8000
+配置数据库文件
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'fruitday',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    }
+}
 
 生成数据库中间文件
 python manage.py makemigrations
 自动生成模型
 python manage.py migrate
+配置静态文件目录
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
+
+
+启动项目
+python manage.py runserver 0.0.0.0:8000
+
+
+创建超级用户
+python manage.py createsuperuser
+
+Models 
+继承 models.Model
+AutoField:自动递增的整型字段，添加记录时它会自动增长。
+BooleanField:布尔
+CharField:字符串  max_length:字符的最大长度
+TextField:文本字段
+DateField:日期字段
+auto_now:当对象被保存时,将该字段的值设置为当前时间
+auto_now_add:当对象首次被创建时,将该字段的值设置为当前时间
+DateTimeField:类似 DateField 
+EmailField:email
+FileField:一个文件上传字段。 参数: upload_to，
+FloatField:浮点型字段 总位数: max_digits 小数位数:decimal_places
+ImageField:类似 FileField， 校验上传对象是否是图片。height_field 和 width_field，按提供的高度和宽度规格保存
+IPAddressField:一个字符串形式的 IP 地址
+NullBooleanField:类似 BooleanField， 不过允许 NULL 作为其中一个选项。 
+PositiveIntegerField:取值范围为非负整数
+TimeField:时间字段，类似于 DateField 和 DateTimeField。
+URLField:用于保存 URL。
+
+
+
+定义后台管理显示的字段名称
+class Meta:
+  1、db_table 指定该实体类对应到的表的名称
+	2、verbose_name  定义当前实体类在后台管理的列表页中的名称
+	3、verbose_name_plural 效果同上
+	4、ordering  指定实体数据列表页中的排序规则 默认按升序排序，降序则需要手动添加 负号
+
+后台管理定制  在admin.py 注册要管理的实体
+@admin.register(Users)
+class UsersAdmin(admin.ModelAdmin):
+    # 显示在后台的列表
+    list_display = ['uname', 'uphone', 'uemail']
+    # 显示点击链接到详情页的字段
+    list_display_links = ['uname', 'uemail']
+    # 指定在列表页就可以编辑 不能出现在list_display_links列表中
+    # list_editable = ['uphone']
+    # 允许被搜索的字段
+    search_fields = ['uname', 'uphone', 'uemail']
+    # 显示在右侧的快速筛选
+    list_filter = ['uname', 'uphone', 'uemail']
+    # 必须是时间列 在列表页的顶端增加时间选择器
+    # date_hierarchy = ''
+    # 在详情页显示那些字段
+    # fields = ['uname', 'uphone', 'uemail', 'isActive']
+    # 对字段进行分组显示 与fields 不能共存
+    fieldsets = (
+        ('分组名称', {'fields': ('uname', 'uphone'), }),
+        # 添加可折叠  'classes': ('collapse', )
+        ('可选信息',{'fields': ('uemail', 'isActive'), 'classes': ('collapse', )})
+    )
+
+
+
